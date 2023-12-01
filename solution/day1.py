@@ -3,10 +3,9 @@ import sys
 
 def read_data(data):
     data = data.splitlines()
-    sum_data = 0
     digs = {'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9'}
     for part in [1,2]:
-        sum_data = 0
+        sum_data = []
         for line in data:
             num = []
             int_num = 0
@@ -19,11 +18,12 @@ def read_data(data):
                         num.append(ch)
                     else:
                         for number in digs.keys():
-                            len_num = len(number)
-                            #print(number, line[idx:idx+len_num])
-                            if line[idx:idx+len_num] == number:
-                                #print(line[idx:idx+len_num], digs[number])
-                                num.append(digs[number])
+                            if number in line:
+                                len_num = len(number)
+                                #print(number, line[idx:idx+len_num])
+                                if line[idx:idx+len_num] == number:
+                                    #print(line[idx:idx+len_num], digs[number])
+                                    num.append(digs[number])
             
             
             #print(line, num)
@@ -34,9 +34,10 @@ def read_data(data):
                     int_num = int(num[0]+num[0])
             if int_num == 0:
                 print(line, num)
-            #print(int_num)
-            sum_data += int_num
-        print(f'part{part}: {sum_data}')
+            
+            sum_data.append(int_num)
+        #print(sum_data)
+        print(f'part{part}: {sum(sum_data)}')
 
 
 
