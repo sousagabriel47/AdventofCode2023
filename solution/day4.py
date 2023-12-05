@@ -8,12 +8,10 @@ def solve(data):
     winners = [line.split(':')[1].split('|')[0].split() for line in data]
     mynum = [line.split(':')[1].split('|')[1].split() for line in data]
     total = 0
-    for part in [2]:
+    for part in [1,2]:
         next_win = []
         next_nums = []
-        next_cards = [[idGame] for idGame,_ in enumerate(winners)]
-        list_cards = []
-        organize_cards = []
+        next_cards = [1 for _,_ in enumerate(winners)]
         for idGame, numbers in enumerate(zip(winners, mynum)):
             win, my = numbers
             point = 0
@@ -26,31 +24,16 @@ def solve(data):
                             point = 1
                     else:
                         point += 1
+            if part == 1:
+                total += point
             if part == 2:
                 if point:
-                    list_cards.append(idGame)
                     for idF in range(1,point+1):
-                        next_cards[idGame].append(idF + idGame) 
-                        list_cards.append(idF + idGame) 
+                    
+                        next_cards[idF + idGame] += 1 * next_cards[idGame]
 
-            print(f'Card {idGame}: {point} {next_cards[idGame]}')
-            total += point
-
-        for cards in next_cards:
-            print(lista_unica(next_cards, cards))
-        print(organize_cards)
+                total = sum(next_cards)
         print(f'part{part}: {total}')
-
-
-def lista_unica(next_cards, lista):
-    l = []
-    if len(lista) == 1:
-        return next_cards[lista[0]]
-    else:
-        for el in lista:
-            l.append(el)
-            l.append(lista_unica(next_cards, lista[1:]))
-    return l
 
 
 if __name__ == "__main__":
