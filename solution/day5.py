@@ -38,7 +38,7 @@ def calc_location(transform, seeds):
     for i,seed in enumerate(seeds):
         out[i][0] = seed
     idTransform = 0
-    for _, params in transform.items():
+    for idT, params in transform.items():
         list_nums = [line[idTransform] for line in out]
         for idSeed, num in enumerate(list_nums):
             check = False
@@ -50,6 +50,7 @@ def calc_location(transform, seeds):
                     break
             if not check:
                 out[idSeed][idTransform+1] = num
+        print(idT, [l[idTransform] for l in out])
         idTransform += 1
     return [line[-1] for line in out]
 
@@ -57,6 +58,9 @@ def calc_location_range(transform, seed_range):
     orig_list = seed_range
     for idT, params in transform.items():
         dest_list = []
+        for intervals in params.values():
+            print(intervals['interval'], end='|')
+        print(':\t', orig_list, end='\t')
         while orig_list:
             seed = orig_list.pop(0)
             stSeed, enSeed = seed
@@ -88,6 +92,9 @@ def calc_location_range(transform, seed_range):
                     break
             if not check:
                 dest_list.append([stSeed, enSeed])
+        
+        print('\t', dest_list)
+        
 
         orig_list = dest_list
     return [dest[0] for dest in dest_list]
