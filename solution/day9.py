@@ -16,23 +16,36 @@ def solve(data):
             last = predict[-1]
             
             while not all([el == 0 for el in last]):
-                diff = [abs(el0 - el1) for el0, el1 in zip(last[:len_list-step],last[1:len_list-step+1])]
+                diff = [el1 - el0 for el0, el1 in zip(last[:len_list-step],last[1:len_list-step+1])]
                 predict.append(diff)
                 last = predict[-1]
                 step += 1
             value = 0
-
             if len(predict[-1]):
-                for diff in predict:
+                predict_list = []
+                if part==1:
+                    for diff in predict[::-1]:
+                        value = diff[-1] + value
+                        predict_list.insert(0,diff + [value])
+                    
+
+
+                    predict_values.append(predict_list[0][-1])
+                if part==2:
+                    for diff in predict[::-1]:
+                        value = diff[0] - value
+                        
+                        predict_list.insert(0,[value] + diff)
+                    
+                    predict_values.append(predict_list[0][0])
+                for diff in predict_list:
                     print(diff)
-                for diff in predict[-2:0:-1]:
-                    value = diff[-1] + value
-                
-                signal = (predict[0][-1]-predict[0][-2])/abs(predict[0][-1]-predict[0][-2])
-                predict_values.append(predict[0][-1] + signal*value)
                 print(predict_values[-1])
+
         ans = sum(predict_values)
         print(f'part{part}: {ans}')
+        #1954443242.0 
+        #1953784198
 
         
 
