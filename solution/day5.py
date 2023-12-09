@@ -18,14 +18,16 @@ def solve(data):
             st_dest, st_source, length = [int(n) for n in ranges.split()]
             transform[name][idT]['interval'] = [st_source,st_source + length - 1]
             transform[name][idT]['delta'] = st_dest - st_source
+
     for part in [1, 2]:
         location = []
         if part == 2:
             total = 0
+            seeds_interval = []
             for stSeed, rangeSeed in zip(seeds[::2], seeds[1::2]):
-                interval = [stSeed, stSeed+rangeSeed-1]
-                
-                location.extend([min(calc_location(transform, interval))])
+                seeds_interval.append([stSeed, stSeed+rangeSeed-1])
+            
+            location = calc_location_range(transform, seeds_interval)
         if part == 1:
             location = calc_location(transform, seeds)
         print(f'part{part}: {min(location)}')
@@ -52,10 +54,43 @@ def calc_location(transform, seeds):
     return [line[-1] for line in out]
 
 def calc_location_range(transform, seed_range):
+    orig_list = seed_range
+    for idT, params in transform.items():
+        dest_list = []
+        while orig_list:
+            seed = orig_list.pop(0)
+            stSeed, enSeed = seed
+            check = False
+            for intervals in params.values():
+                stInt, enInt = intervals['interval']
+                if stSeed > enInt or enSeed < stInt:
+                    continue
+                if stInt <= stSeed and enSeed <= enInt:
+                    dest_list.append([stSeed + intervals['delta'], enSeed + intervals['delta']])
+                    check = True
+                    break
+                if stInt <= stSeed and enSeed > enInt:
+                    dest_list.append([stSeed + intervals['delta'], enInt + intervals['delta']])
+                    orig_list.append([enInt + 1, enSeed])
+                    check = True
+                    break
+                if stInt > stSeed and enSeed <= enInt:
+                    dest_list.append([stSeed + intervals['delta'], enInt + intervals['delta']])
+                    orig_list.append([stSeed, stInt - 1])
+                    check = True
+                    break
+                    
+                if stInt >= stSeed and enSeed >= enInt:
+                    dest_list.append([stInt + intervals['delta'], enInt + intervals['delta']])
+                    orig_list.append([stSeed, stInt - 1])
+                    orig_list.append([enInt + 1, enSeed])
+                    check = True
+                    break
+            if not check:
+                dest_list.append([stSeed, enSeed])
 
-    for _, params in transform.items():
-        pass
-    return []
+        orig_list = dest_list
+    return [dest[0] for dest in dest_list]
 
 if __name__ == "__main__":
     nday = 5
