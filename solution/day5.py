@@ -54,18 +54,7 @@ def calc_location(transform, seeds):
 def calc_location_range(transform, seed_range):
 
     for _, params in transform.items():
-        list_nums = [line[idTransform] for line in out]
-        for idSeed, num in enumerate(list_nums):
-            check = False
-            for intervals in params.values():
-                if (intervals['interval'][0] <= num and
-                    num <= intervals['interval'][1]):
-                    check = True
-                    out[idSeed][idTransform+1] = num + intervals['delta']
-                    break
-            if not check:
-                out[idSeed][idTransform+1] = num
-        idTransform += 1
+        pass
     return []
 
 if __name__ == "__main__":
