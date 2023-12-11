@@ -50,22 +50,30 @@ def calc_location(transform, seeds):
                     break
             if not check:
                 out[idSeed][idTransform+1] = num
-        print(idT, [l[idTransform] for l in out])
+        #print(idTransform, [l[idTransform] for l in out])
         idTransform += 1
+    #print(idTransform, [l[idTransform] for l in out])
     return [line[-1] for line in out]
 
 def calc_location_range(transform, seed_range):
-    orig_list = seed_range
+    orig_list = sorted(seed_range, key=lambda x:x[0])
     for idT, params in transform.items():
         dest_list = []
-        for intervals in params.values():
-            print(intervals['interval'], end='|')
-        print(':\t', orig_list, end='\t')
+        
+        # for intervals in params.values():
+        #     print(intervals['interval'], end=':')
+        #     print(intervals['delta'], end='|')
+        
+        
+        # print(':\t', orig_list)
         while orig_list:
             seed = orig_list.pop(0)
+            #print_interval([seed],'x')
             stSeed, enSeed = seed
             check = False
             for intervals in params.values():
+                
+                #print_interval([intervals['interval']],'i',intervals['delta'])
                 stInt, enInt = intervals['interval']
                 if stSeed > enInt or enSeed < stInt:
                     continue
@@ -79,7 +87,7 @@ def calc_location_range(transform, seed_range):
                     check = True
                     break
                 if stInt > stSeed and enSeed <= enInt:
-                    dest_list.append([stSeed + intervals['delta'], enInt + intervals['delta']])
+                    dest_list.append([stInt + intervals['delta'], enSeed + intervals['delta']])
                     orig_list.append([stSeed, stInt - 1])
                     check = True
                     break
@@ -92,12 +100,18 @@ def calc_location_range(transform, seed_range):
                     break
             if not check:
                 dest_list.append([stSeed, enSeed])
-        
-        print('\t', dest_list)
-        
 
         orig_list = dest_list
     return [dest[0] for dest in dest_list]
+
+def print_interval(l_int,marker = 'x',offset=''):
+    interval = ['-' for _ in range(100)]
+    for i in l_int:
+        for idx in range(i[0], i[1]+1):
+            interval[idx] = marker
+
+    print(''.join(interval) + f'>> {offset}')
+
 
 if __name__ == "__main__":
     nday = 5
