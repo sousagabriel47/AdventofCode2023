@@ -28,33 +28,37 @@ def solve(data):
     #print(connections)
     ans = 0
     for part in [1,2]:
-        for st_p in connections[st_key]:
-            loop = False
-            closed = False
-            caminho = [st_pos, st_p]
-            p_dict = f'{st_p[0]}_{st_p[1]}'
-            p = st_p
-            it = 0
-            while not(loop or closed):
-                if p_dict in connections.keys():
-                    if caminho[-2] in connections[p_dict]:
-                        for conn in connections[p_dict]:
-                            if conn not in caminho:
-                                p = conn
-                                p_dict = f'{conn[0]}_{conn[1]}'
-                                caminho.append(conn)
-                                break
-                            if len(caminho) > 2:
-                                if f'{conn[0]}_{conn[1]}' == st_key:
-                                    loop = True
-                else:
-                    closed = True
-                if it < MAX__IT:
-                    it += 1
-                else:
-                    break
-            if loop:
-                ans = len(caminho)/2
+        if part==1:
+            for st_p in connections[st_key]:
+                loop = False
+                closed = False
+                caminho = [st_pos, st_p]
+                p_dict = f'{st_p[0]}_{st_p[1]}'
+                p = st_p
+                it = 0
+                while not(loop or closed):
+                    if p_dict in connections.keys():
+                        if caminho[-2] in connections[p_dict]:
+                            for conn in connections[p_dict]:
+                                if conn not in caminho:
+                                    p = conn
+                                    p_dict = f'{conn[0]}_{conn[1]}'
+                                    caminho.append(conn)
+                                    break
+                                if len(caminho) > 2:
+                                    if f'{conn[0]}_{conn[1]}' == st_key:
+                                        loop = True
+                                        caminho.append(conn)
+                    else:
+                        closed = True
+                    if it < MAX__IT:
+                        it += 1
+                    else:
+                        break
+                if loop:
+                    ans = len(caminho)/2
+                    print(caminho[0],caminho[-1])
+            
         
 
         print(f'part{part}: {ans}')
