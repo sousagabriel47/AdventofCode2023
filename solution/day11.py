@@ -12,9 +12,8 @@ def solve(data):
         if part == 1:
             step = 1
         else:
-            step = 2
+            step = 1000000 - 1
         dictExpand = expandir(universe, step)
-        print(dictExpand)
         listDist = calc_dist(dictExpand)
         ans = int(sum(listDist)/2)
         print(f'part{part}: {ans}')
