@@ -20,12 +20,13 @@ def solve(data):
             else:
                 vert = check_vertical(padrao, part, dict_reflection[id][0])
                 hort = check_horizontal(padrao, part, dict_reflection[id][1])
-                
-                print_refletion(padrao,[vert, hort])
                 if vert + hort == 0:
                     
-                    print(dict_reflection[id])
                     vert,hort = dict_reflection[id]
+                    #print_refletion(padrao,[vert, hort])
+                    #print(dict_reflection[id])
+                if vert != 0 and hort != 0:
+                    print(vert, hort)
 
             reflection.append(vert + hort*100)
         ans = sum(reflection)
