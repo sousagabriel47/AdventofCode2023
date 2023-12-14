@@ -64,8 +64,14 @@ def solve(data):
             inside_map = [list([0]*len(pipe_map[0])) for _ in range(len(pipe_map))]
             
             inside_p = 0
+            #remark
             for iL,line in enumerate(pipe_map):
                 for iR,p in enumerate(line):
+                    if [iL, iR] not in caminho:
+                        pipe_map[iL][iR] = '.'
+            print_map(pipe_map)
+            for iL,line in enumerate(pipe_map):
+                for iR,p in enumerate(line[:-1]):
                     if p == '.':
                         pontos_line = set([pR for pL,pR in caminho if pL == iL and pR < iR])
                         v = valor_ponto(pontos_line, line[:iR+1])
