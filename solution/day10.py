@@ -56,14 +56,70 @@ def solve(data):
                     else:
                         break
                 if loop:
-                    ans = len(caminho)/2
-                    print(caminho[0],caminho[-1])
+                    ans = (len(caminho) - 1)/2
+                    break
+        else:
+            #stt S
+            pipe_map[st_pos[0]][st_pos[1]] = 'L'
+            inside_map = [list([0]*len(pipe_map[0])) for _ in range(len(pipe_map))]
             
-        
+            inside_p = 0
+            for iL,line in enumerate(pipe_map):
+                for iR,p in enumerate(line):
+                    if p == '.':
+                        pontos_line = set([pR for pL,pR in caminho if pL == iL and pR < iR])
+                        v = valor_ponto(pontos_line, line[:iR+1])
+                        inside_map[iL][iR] = v
+                        if v % 2:
+                            inside_p += 1
+            ans = inside_p
 
+
+            print_map(inside_map)
         print(f'part{part}: {ans}')
         
 
+def print_map(mapa):
+    for line in mapa:
+        for ch in line:
+            print(ch, end='')
+        print()
+
+def valor_ponto(caminho, line):
+    if not caminho:
+        return 0
+    
+    if line[-1] != '.':
+        return 0
+    seg_caminho = []
+    for pCaminho in caminho:
+        seg_caminho.append(line[pCaminho])
+    while '-' in seg_caminho:
+        seg_caminho.remove('-')
+
+    if seg_caminho.count('|') == len(seg_caminho):
+        return len(seg_caminho)
+    v = 0
+    lat = False
+    prev_conner = ''
+    inside = {'F': {'7': 0, 'J': 1}, 'L': {'7': 1, 'J': 0}, }
+    
+    for p in seg_caminho:
+        if p == '|':
+            v += 1
+            lat = False
+        if not lat:
+            if p in ['F','L']:
+                lat = True
+                prev_conner = p
+        else:
+            if p in ['7','J']:
+                v += inside[prev_conner][p]
+                lat = False
+            else:
+                lat = False
+                continue
+    return v
 
 
 
