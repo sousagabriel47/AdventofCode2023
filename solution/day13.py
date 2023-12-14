@@ -21,12 +21,7 @@ def solve(data):
                 vert = check_vertical(padrao, part, dict_reflection[id][0])
                 hort = check_horizontal(padrao, part, dict_reflection[id][1])
                 if vert + hort == 0:
-                    
-                    vert,hort = dict_reflection[id]
-                    #print_refletion(padrao,[vert, hort])
-                    #print(dict_reflection[id])
-                if vert != 0 and hort != 0:
-                    print(vert, hort)
+                    print_refletion(padrao,[vert, hort])
 
             reflection.append(vert + hort*100)
         ans = sum(reflection)
@@ -48,6 +43,15 @@ def print_refletion(padrao, reflection):
             for ch in line:
                 print(ch, end='')
             print()
+        
+        for i in range(len(padrao[0])):
+            if i != pos and i!= pos+1:
+                print(' ', end='')
+            if i == pos:
+                print('>', end='')
+            if i == pos+1:
+                print('<', end='')
+        print()
     elif h!=0:
         pos = h-1
         
@@ -60,6 +64,13 @@ def print_refletion(padrao, reflection):
                 print('^', end='')
             for ch in line:
                 print(ch, end='')
+            if i != pos and i!= pos+1:
+                print(' ', end='')
+            if i == pos:
+                print('V', end='')
+            if i == pos+1:
+                print('^', end='')
+            
             print()
 
 
@@ -84,22 +95,20 @@ def check_vertical(padrao, part, ignore=0):
             check_smudge, count_smudge = smudge(r1, r2)
             
         if check_smudge:
-            #print(iR, r1, r2, end = '')
+            
             dRTotal = iR if iR < nR/2 else nR - iR
             check = True
             if iR < nR - 1:
-                for dR in range(dRTotal):
+                for dR in range(1,dRTotal):
 
                     if part==1:
                         c = [line[iR + dR] for line in padrao] == [line[iR-1 - dR] for line in padrao]
                     if part==2:
                         c, s = smudge([line[iR + dR] for line in padrao], [line[iR-1 - dR] for line in padrao])
                         count_smudge += s
-                        #print(c, s, end='')
                     if  not c or count_smudge > 1:
                         check = False
                         break
-            #print()
         if check:
             nrow = iR
             break
