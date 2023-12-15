@@ -61,7 +61,6 @@ def solve(data):
         else:
             #stt S
             pipe_map[st_pos[0]][st_pos[1]] = 'L'
-            inside_map = [list([0]*len(pipe_map[0])) for _ in range(len(pipe_map))]
             
             inside_p = 0
             #remark
@@ -69,27 +68,68 @@ def solve(data):
                 for iR,p in enumerate(line):
                     if [iL, iR] not in caminho:
                         pipe_map[iL][iR] = '.'
-            print_map(pipe_map)
+            inside_map = []
             for iL,line in enumerate(pipe_map):
-                for iR,p in enumerate(line[:-1]):
+                inside_map.append([])
+                for iR,p in enumerate(line):
                     if p == '.':
                         pontos_line = set([pR for pL,pR in caminho if pL == iL and pR < iR])
                         v = valor_ponto(pontos_line, line[:iR+1])
-                        inside_map[iL][iR] = v
+                        inside_map[iL].append(v)
                         if v % 2:
                             inside_p += 1
-            ans = inside_p
+                    else:
+                        inside_map[iL].append(-1)
+                        print(0,end='')
+            
 
+            #remark
+            for iL,line in enumerate(inside_map):
+                for iR, p in enumerate(line):
+                    out = False
+                    if p % 2 and p != -1:
+                        for dL, dR in [[0,1],[-1,0],[1,0],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]:
+                            if (iL + dL) > 0 and (iL + dL) < 140 and (iR + dR) > 0 and (iR + dR) < 140:
+                                if inside_map[iL+dL][iR+dR] % 2 == 0:
+                                    out = True
+                                    break
+                    if out:
+                        inside_map[iL][iR] = 0
 
+            inside_p = 0
+            for iL,line in enumerate(pipe_map):
+                for iR,p in enumerate(line):
+                    if [iL, iR] not in caminho:
+                        if inside_map[iL][iR] % 2:
+                            pipe_map[iL][iR] = 'I'
+                            inside_p += 1
+                        else:
+                            pipe_map[iL][iR] = 'O'
+            
             print_map(inside_map)
+            print_map_color(pipe_map)
+            ans = inside_p
         print(f'part{part}: {ans}')
         
-
 def print_map(mapa):
     for line in mapa:
         for ch in line:
             print(ch, end='')
         print()
+
+def print_map_color(mapa):
+    CEND    = '\33[0m'
+    CBLACK  = '\33[30m'
+    CRED    = '\33[31m'
+    CGREEN  = '\33[32m'
+    color = {'I': CRED, 'O': CGREEN}
+    color_end = {'I': CEND, 'O': CEND}
+    for i,line in enumerate(mapa):
+        out = str(i) + '\t'
+        for ch in line:
+            out += color.get(ch,'') + str(ch) + color_end.get(ch,'')
+        
+        print(out.replace(' ',''))
 
 def valor_ponto(caminho, line):
     if not caminho:
