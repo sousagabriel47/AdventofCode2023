@@ -74,30 +74,10 @@ def solve(data):
                 v = 0
                 prev = '.'
                 for iR,p in enumerate(line):
-                    if p == '.':
-                        v, prev = valor_ponto(p, prev)
-                        inside_map[iL].append(v)
-                        if v % 2:
-                            inside_p += 1
-                    else:
-                        inside_map[iL].append(-1)
-                if iL > 3:
-                    exit()
-            
-
-            #remark
-            # for iL,line in enumerate(inside_map):
-            #     for iR, p in enumerate(line):
-            #         out = False
-            #         if p % 2 and p != -1:
-            #             for dL, dR in [[0,1],[-1,0],[1,0],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]:
-            #                 if (iL + dL) > 0 and (iL + dL) < 140 and (iR + dR) > 0 and (iR + dR) < 140:
-            #                     if inside_map[iL+dL][iR+dR] % 2 == 0:
-            #                         out = True
-            #                         break
-            #         if out:
-            #             inside_map[iL][iR] = 0
-
+                    v, prev = valor_ponto(p, v, prev)
+                    inside_map[iL].append(v)
+                    if v % 2:
+                        inside_p += 1
             inside_p = 0
             for iL,line in enumerate(pipe_map):
                 for iR,p in enumerate(line):
@@ -114,7 +94,7 @@ def solve(data):
 def print_map(mapa):
     for line in mapa:
         for ch in line:
-            print(ch, end='')
+            print(int(ch)%10, end='')
         print()
 
 def print_map_color(mapa):
@@ -137,40 +117,61 @@ def print_map_color(mapa):
         
         print(out.replace(' ',''))
 
-def valor_ponto(caminho, line):
-    if not caminho:
-        return 0
+def valor_ponto(p, v, prev):
     
-    if line[-1] != '.':
-        return 0
-    seg_caminho = []
-    for pCaminho in caminho:
-        seg_caminho.append(line[pCaminho])
-    while '-' in seg_caminho:
-        seg_caminho.remove('-')
-
-    if seg_caminho.count('|') == len(seg_caminho):
-        return len(seg_caminho)
-    v = 0
-    lat = False
-    prev_conner = ''
     inside = {'F': {'7': 0, 'J': 1}, 'L': {'7': 1, 'J': 0}, }
     
-    for p in seg_caminho:
-        if p == '|':
-            v += 1
-            lat = False
-        if not lat:
-            if p in ['F','L']:
-                lat = True
-                prev_conner = p
-        else:
-            if p in ['7','J']:
-                v += inside[prev_conner][p]
-                if v:
-                    print(line)
-            lat = False
-    return v
+    if p == '.':
+        v += 0
+        prev = p
+    elif p == '|':
+        v += 1
+        prev = p
+    elif p == '-':
+        v += 0
+        prev = prev
+    elif p in 'FL':
+        v += 0
+        prev = p
+    elif p in '7J':
+        v += inside[prev][p]
+        prev = p
+
+
+
+    # if not caminho:
+    #     return 0
+    
+    # if line[-1] != '.':
+    #     return 0
+    # seg_caminho = []
+    # for pCaminho in caminho:
+    #     seg_caminho.append(line[pCaminho])
+    # while '-' in seg_caminho:
+    #     seg_caminho.remove('-')
+
+    # if seg_caminho.count('|') == len(seg_caminho):
+    #     return len(seg_caminho)
+    # v = 0
+    # lat = False
+    # prev_conner = ''
+    # inside = {'F': {'7': 0, 'J': 1}, 'L': {'7': 1, 'J': 0}, }
+    
+    # for p in seg_caminho:
+    #     if p == '|':
+    #         v += 1
+    #         lat = False
+    #     if not lat:
+    #         if p in ['F','L']:
+    #             lat = True
+    #             prev_conner = p
+    #     else:
+    #         if p in ['7','J']:
+    #             v += inside[prev_conner][p]
+    #             if v:
+    #                 print(line)
+    #         lat = False
+    return v, prev
 
 
 
