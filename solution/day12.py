@@ -8,7 +8,7 @@ def solve(data):
     padrao = [list(map(int,line[1].split(','))) for line in record]
 
     ans = 0
-    for part in [1,2]:
+    for part in [1]:
         for r, p in zip(reg, padrao):
             nX = r.count('?')
             l_padroes = ['#'*n for n in p]
