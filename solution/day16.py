@@ -29,7 +29,7 @@ def solve(data):
             caminho_total.append([p_st, ch])
             visit.add(f'{p_st[0]}_{p_st[1]}')
             n_visit = -1
-            for _ in range(1000):
+            for _ in range(100):
                 p, v, ch = caminho.popleft()
                 os.system('cls')
                 p_atual = [p[0] + v[0], p[1] + v[1]]
@@ -45,6 +45,7 @@ def solve(data):
                         caminho_total.append([next_p,next_ch])
                         visit.add(f'{next_p[0]}_{next_p[1]}')
                 print_caminho(color_map, caminho_total)
+                sleep(0.1)
 
             ans[part-1] = len(visit)                  
                 
