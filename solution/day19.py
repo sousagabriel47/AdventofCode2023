@@ -15,14 +15,22 @@ def solve(data):
     in_list = in_list.splitlines()
 
 
-    work_list = {work.split('{')[0]: work.split('{')[1].replace('}','') for work in work_list.splitlines()}
+    work_list = {work.split('{')[0]: work.split('{')[1].replace('}','').split(',') for work in work_list.splitlines()}
     in_list = [input.replace('{','').replace('}','').split(',') for input in in_list]
     print(work_list)
 
     
     for part in [1,2]:
-        
-            
+        no = 'in'
+        for input in in_list:
+            work = work_list[no]
+            for step in work:
+                x,m,a,s = [int(el[2:]) for el in input]
+                expr = 'x'
+                print(x,m,a,s)
+                print(eval(expr))
+
+
         print(f'part{part}: {ans[part-1]}')
 
 
