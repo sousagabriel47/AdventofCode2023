@@ -14,18 +14,20 @@ def solve(data):
 
     mov = {'R': [0,1], 'L':[0,-1], 'U': [-1,0], 'D':[1,0]}
     mov2 = ['R', 'D', 'L', 'U']
-    for part in [1]:
+    for part in [1,2]:
         caminho = [[0,0]]
+        perimetro = 0
         for cmd, t, color in movimentos:
             
             if part==1:
                 vetor = mov[cmd]
             else:
                 new_cmd = mov2[int(color[-2])]
-                new_t = int(color[2:-1],16)+1
+                new_t = int(color[2:-2],16)
                 vetor = mov[new_cmd]
             steps = int(t) if part == 1 else new_t
             p = caminho[-1]
+            perimetro += steps
             caminho.append([p[0] + vetor[0]*steps,p[1] + vetor[1]*steps])
         # limites
         listL = [p[0] for p in caminho]
@@ -34,24 +36,11 @@ def solve(data):
         limL = [min(listL),max(listL)]
         limR = [min(listR),max(listR)]
         # create mapa
-        mapa  = [list('.' * (limR[1] - limR[0] + 1)) for _ in range(limL[1] - limL[0] + 1)] 
-        for p in caminho:
-            mapa[p[0]-limL[0]][p[1]-limR[0]] = '#'
-                
+        # mapa  = [list('.' * (limR[1] - limR[0] + 1)) for _ in range(limL[1] - limL[0] + 1)] 
+        # for p in caminho:
+        #     mapa[p[0]-limL[0]][p[1]-limR[0]] = '#'
 
-
-
-        # p = Path(caminho)
-        # inside = 0
-        # for iL in range(limL[0],limL[1]+1):
-        #     for iR in range(limR[0],limR[1]+1):
-        #         if p.contains_point((iL,iR)) or [iL,iR] in caminho:
-        #             inside += 1
-
-        # ans[part-1] = inside
-        print_mapa_color(mapa)
-        # print(len(caminho))
-        ans[part-1] = Area(caminho)
+        ans[part-1] = int(Area(caminho) + perimetro/2 + 1)
             
         print(f'part{part}: {ans[part-1]}')
 
