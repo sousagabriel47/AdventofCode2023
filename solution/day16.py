@@ -22,18 +22,21 @@ def solve(data):
         caminho_total = []
         visit = set()
         if part==1:
-            p_st = [0,-1]
+            p_st = [0,0]
             v_st = [0,1]
             ch = '>'
             caminho.append([p_st,v_st,ch])
             caminho_total.append([p_st, ch])
             visit.add(f'{p_st[0]}_{p_st[1]}')
             n_visit = -1
-            for i in range(10):
-                p, v, ch = caminho.popleft()
+            for i in range(10000000):
+                if i == 0:
+                    p, v, ch = p_st, [0,0], ch
+                else:
+                    p, v, ch = caminho.popleft()
                 p_atual = [p[0] + v[0], p[1] + v[1]]
                 next_p = mapa[p_atual[0]][p_atual[1]]
-                # print(f'{p}  {ch} --> {next_p}:{p_atual} ')
+                #print(f'{p}  {ch} --> {next_p}:{p_atual} ')
                 # print(caminho_total)
                 next_list = mov[ch].get(next_p,[[ch, v]])
                 for next in next_list:
@@ -45,7 +48,7 @@ def solve(data):
                         caminho_total.append([next_p,next_ch])
                         visit.add(f'{next_p[0]}_{next_p[1]}')
                 
-                print(caminho_total)
+                #print(caminho_total)
                 print(i, len(visit))
                 print_caminho(color_map, caminho_total)
                 #print(len(visit))
