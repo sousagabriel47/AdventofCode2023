@@ -29,7 +29,7 @@ def solve(data):
             caminho_total.append([p_st, ch])
             visit.add(f'{p_st[0]}_{p_st[1]}')
             n_visit = -1
-            for i in range(10000000):
+            for i in range(200000):
                 if i == 0:
                     p, v, ch = p_st, [0,0], ch
                 else:
@@ -49,8 +49,8 @@ def solve(data):
                         visit.add(f'{next_p[0]}_{next_p[1]}')
                 
                 #print(caminho_total)
-                print(i, len(visit))
-                print_caminho(color_map, caminho_total)
+                # print(i, len(visit))
+            print_caminho(color_map, caminho_total)
                 #print(len(visit))
 
             ans[part-1] = len(visit)                  
@@ -65,7 +65,7 @@ def print_caminho(mapa, caminho):
             mapa[coor[0]][coor[1]] = ch
     if mapa[caminho[-1][0][0]][caminho[-1][0][1]] not in espelhos:
         mapa[caminho[-1][0][0]][caminho[-1][0][1]] = '*'
-    print_mapa_color(mapa)
+    print_mapa(mapa)
 
 def print_mapa_color(mapa):
     espelhos = '\/|-'
@@ -84,6 +84,13 @@ def print_mapa_color(mapa):
             color = CRED if ch in caminho else CRED2 if ch in especial else CGREEN if ch in espelhos else CWHITE
             out += color + str(ch) + CEND
         print(out.replace(' ',''))
+
+def print_mapa(mapa):
+    for i,line in enumerate(mapa):
+        print(str(i), '\t', end='')
+        for ch in line:
+            print(ch, end='')
+        print()
 
 if __name__ == "__main__":
     nday = 16
