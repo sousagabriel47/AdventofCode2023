@@ -47,48 +47,63 @@ def solve(data):
                     ans[part-1] += x + m + a + s
         else:
             ranges = [[{'x':[1, 4000], 'm':[1, 4000], 'a':[1, 4000], 's':[1, 4000]},'in']]
-            
-            while not all([irange[1] in 'AR' for irange in ranges]):
+            out = []
+            while ranges: #while not all([irange[1] in 'AR' for irange in out]):
                 #iteracao
                 valores, no = ranges.pop(0)
-                test_list = [valores]            
-
-                if no not in 'AR':
-                    for teste in work_dict[no]:
-                        # teste = ['s<1351','px']
-                        value_teste = test_list.pop(0)
-                        if len(teste) == 2:
-                            var_test = teste[0][0]
-                            limite = int(teste[0][2:])
-                            cond = teste[0][1]
-                            next_no = teste[1]
-                            v_min, v_max = value_teste[var_test]
-                            if v_min <= limite and limite <= v_max:
-                                # v_min ... limite ... v_max
-                                # cond > False: [v_min,limite] True [limite+1,v_max]
-                                # cond < False: [limite,v_max] True [v_min,limite-1]
-                                if cond == '>':
-                                    #saida False
-                                    value_teste.update({var_test : [v_min, limite]})
-                                    test_list.append(value_teste)
-                                    # saida True
-                                    value_teste[var_test] = [limite+1, v_max]
-                                    ranges.append([value_teste,next_no])
-                                elif cond == '<':
-                                    #saida False
-                                    value_teste[var_test] = [limite,v_max]
-                                    test_list.append(value_teste)
-                                    # saida True
-                                    value_teste_ok = copy.copy(value_teste)
-                                    value_teste_ok[var_test] = [v_min,limite-1]
+                test_list = [valores]
+                for teste in work_dict[no]:
+                    # teste = ['s<1351','px']
+                    value_teste = test_list.pop(0)
+                    if len(teste) == 2:
+                        var_test = teste[0][0]
+                        limite = int(teste[0][2:])
+                        cond = teste[0][1]
+                        next_no = teste[1]
+                        v_min, v_max = value_teste[var_test]
+                        if v_min <= limite and limite <= v_max:
+                            # v_min ... limite ... v_max
+                            # cond > False: [v_min,limite] True [limite+1,v_max]
+                            # cond < False: [limite,v_max] True [v_min,limite-1]
+                            if cond == '>':
+                                #saida False
+                                value_teste.update({var_test : [v_min, limite]})
+                                test_list.append(value_teste)
+                                # saida True
+                                value_teste_ok = copy.copy(value_teste)
+                                value_teste_ok[var_test] = [limite+1, v_max]
+                                if next_no in 'AR':
+                                    out.append([value_teste_ok,no,next_no])
+                                else:
                                     ranges.append([value_teste_ok,next_no])
-                                    
-                            else:
-                                test_list.append(value_teste) 
+                            elif cond == '<':
+                                #saida False
+                                value_teste.update({var_test : [limite,v_max]})
+                                test_list.append(value_teste)
+                                # saida True
+                                value_teste_ok = copy.copy(value_teste)
+                                value_teste_ok[var_test] = [v_min,limite-1]
+                                if next_no in 'AR':
+                                    out.append([value_teste_ok,no,next_no])
+                                else:
+                                    ranges.append([value_teste_ok,next_no])
+                                
+                        else:
+                            test_list.append(value_teste) 
+                    else:
+                        if teste[0] in 'AR':
+                            out.append([value_teste,no,teste[0]])
                         else:
                             ranges.append([value_teste,teste[0]])
-            for irange in ranges:
-                print(irange)
+                
+                
+            for irange in out:
+                if irange[2] == 'A':
+                    v = []
+                    for r in irange[0].values():
+                        v.append(r[1] - r[0] + 1)
+                    prod = lambda x, m, a, s: x*m*a*s
+                    ans[part-1] += prod(*v)
             
 
         print(f'part{part}: {ans[part-1]}')
