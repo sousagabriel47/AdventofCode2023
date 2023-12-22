@@ -16,56 +16,67 @@ def solve(data):
            'v': {'.':[['v',[1,0]]],'\\':[['>',[0,1]]],'/': [['<', [0,-1]]],'|':[['v', [1,0]]], '-':[['<', [0,-1]],['>', [0,1]]]}}
     nL = len(mapa)
     nR = len(mapa[0])
-    color_map = copy.deepcopy(mapa)
-    for part in [1]:
-        caminho = deque()
-        caminho_total = set()
-        visit = set()
+    blank_mapa = copy.deepcopy(mapa)
+    for part in [1,2]:
         if part==1:
-            p_st = [0,0]
-            v_st = [0,1]
-            ch = '>'
-            for i in range(2000000):
-                if i == 0:
-                    p, v, ch = p_st, [0,0], ch
-                else:
-                    if not caminho:
-                        break
-                    p, v, ch = caminho.popleft()
-                p_atual = [p[0] + v[0], p[1] + v[1]]
-                next_p = mapa[p_atual[0]][p_atual[1]]
-                if (tuple(p_atual), ch) in visit:
-                    continue
-                visit.add((tuple(p_atual), ch))
-                caminho_total.add(tuple(p_atual))
-                next_list = mov[ch].get(next_p)
-                for next in next_list:
-                    next_ch, next_v = next
-                    next_p = [next_v[0] + p_atual[0], next_v[1] + p_atual[1]]
-                    if next_p[0] >= 0 and next_p[0] < nL and next_p[1] >= 0 and next_p[1] < nR:
-                        caminho.append([p_atual,next_v,next_ch])
-                
-            ans[part-1] = len(visit)                  
-                
+            caminho_total = raios(mov, [0,0], '>', copy.deepcopy(blank_mapa))                
+            ans[part-1] = len(caminho_total)                  
+            print_caminho(copy.deepcopy(blank_mapa), caminho_total)
+
+        elif part==2:
+            list_caminho = []
+            for iL in range(nL):
+                for iR,ch in [[0,'>'],[nR-1,'<']]:
+                    list_caminho.append(len(raios(mov, [iL,iR], ch, copy.deepcopy(blank_mapa))))
+                    print(iL, iR, max(list_caminho))
+            
+            for iR in range(nR):
+                for iL,ch in [[0,'v'],[nL-1,'^']]:
+                    list_caminho.append(len(raios(mov, [iL,iR], ch, copy.deepcopy(blank_mapa))))
+            
+            ans[part-1] = max(list_caminho)
+
         print(f'part{part}: {ans[part-1]}')
-        x = []
-        y = []
-        for a, b in caminho_total:
-            x.append(int(a))
-            y.append(int(b))
-        print(max(x),min(x))
-        print(max(y),min(y))
-        print(len(caminho_total))
+
+
+def raios(mov, p_st, ch, mapa):
+    nL = len(mapa)
+    nR = len(mapa[0])
+
+    caminho = deque()
+    caminho_total = []
+    visit = set()
+    for i in range(2000000):
+        if i == 0:
+            p, v, ch = p_st, [0,0], ch
+            caminho_total.append([p, ch])
+        else:
+            if not caminho:
+                break
+            p, v, ch = caminho.popleft()
+        p_atual = [p[0] + v[0], p[1] + v[1]]
+        next_p = mapa[p_atual[0]][p_atual[1]]
+        if (tuple(p_atual), ch) in visit:
+            continue
+        visit.add((tuple(p_atual), ch))
+
+        next_list = mov[ch].get(next_p)
+        for next in next_list:
+            next_ch, next_v = next
+            next_p = [next_v[0] + p_atual[0], next_v[1] + p_atual[1]]
+            if next_p[0] >= 0 and next_p[0] < nL and next_p[1] >= 0 and next_p[1] < nR:
+                caminho.append([p_atual,next_v,next_ch])
+                if next_p not in [p[0] for p in caminho_total]:
+                    caminho_total.append([next_p, next_ch])
+    return caminho_total
 
 def print_caminho(mapa, caminho):
     espelhos = '\/|-'
-    for p in caminho[:-1]:
+    for p in caminho:
         coor, ch = p
         if mapa[coor[0]][coor[1]] not in espelhos:
             mapa[coor[0]][coor[1]] = ch
-    if mapa[caminho[-1][0][0]][caminho[-1][0][1]] not in espelhos:
-        mapa[caminho[-1][0][0]][caminho[-1][0][1]] = '*'
-    print_mapa(mapa)
+    print_mapa_color(mapa)
 
 def print_mapa_color(mapa):
     espelhos = '\/|-'
