@@ -22,31 +22,75 @@ def solve(data, mode):
 
     ans = [0,0]
 
-    for part in [1,2]:
+    for part in [1, 2]:
         garden = st_pos
-        if mode == 'teste':
-            print_mapa_color(nL, nR, rocks, garden)
         if part == 1:
-            for _ in range(64):
-                
+            for _ in range(10):
+                print(garden)
                 new_garden = next_garden(garden, rocks, nL, nR, part)
                 garden = copy(new_garden)
             
             if mode == 'teste':
                 print_mapa_color(nL, nR, rocks, garden)
-                
             ans[part-1] = len(garden)
         else:
             garden_size = []
-            for step in range(200):
+            mapa_len = [[0, nL], [0, nR]]
+            for step in range(10):
                 new_garden = next_garden(garden, rocks, nL, nR, part)
-                print(step, len(new_garden))
-                garden_size.append(len(new_garden))
                 garden = copy(new_garden)
+
+                dir = check_expansao(mapa_len,garden)
+                if dir:
+                    rocks, mapa_len = expandir_rocks(mapa_len, rocks)
+
                 
 
         print(f'part{part}: {ans[part-1]}')
 
+
+def expandir_rocks(mapa_len ,base_rocks, atual_rocks, dir_exp = []):
+    next_rocks = []
+    #[minL,maxL]    [minR,maxR]
+
+
+    lenL, lenR = mapa_len
+    minL, maxL = lenL
+    minR, maxR = lenR
+
+
+
+
+
+
+    lenL, lenR = mapa_len
+    lenL = [minL, maxL]
+    lenR = [minR, maxR]
+
+    next_len = [lenL, lenR]
+    return next_rocks, next_len
+
+def check_expansao(mapa_len, garden):
+    dir_exp = []
+    lenL, lenR = mapa_len
+    minL, maxL = lenL
+    minR, maxR = lenR
+    gardenL = [p[0] for p in garden]
+    gardenR = [p[1] for p in garden]
+    D_LIM = 1
+    #   
+    #  < 
+    #      
+    if (min(gardenL) - D_LIM) <= minL:
+        dir_exp.append('D')
+    if (max(gardenL) + D_LIM) >= maxL:
+        dir_exp.append('U')
+    if (min(gardenR) - D_LIM) <= minR:
+        dir_exp.append('L')
+    if (max(gardenR) + D_LIM) >= maxR:
+        dir_exp.append('R')
+
+    return dir_exp
 
 def print_mapa_color(nL, nR, rocks, garden):
     CEND    = '\33[0m'
