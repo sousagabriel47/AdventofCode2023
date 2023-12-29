@@ -85,7 +85,7 @@ def rota_dfs(p, caminho, dist, end):
     if p == end:
         #print(len(total))
         total.append(dist)
-        print(dist, max(total))
+        #print(dist, max(total))
         return
     #print(caminho)
     for nP,nDist in D_VERT[p]:
