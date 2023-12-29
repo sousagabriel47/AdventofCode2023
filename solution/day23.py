@@ -45,12 +45,13 @@ def rota_dfs(p, forest, paths, slopes, mapa_len, caminho, dist, end, part):
 
     if p == end:
         print(len(total))
+        print_mapa_color(forest, paths, slopes, mapa_len, caminho, p)
         total.append(dist)
         return
 
     new = check_dir(p, forest, paths, slopes, mapa_len, part, caminho)
-    if dist > 2400:
-        #print_mapa_color(mapa, caminho, p)
+    if not dist % 500:
+        print_mapa_color(forest, paths, slopes, mapa_len, caminho, p)
         print(p, dist, new)
 
     for nP in new:
@@ -83,7 +84,7 @@ def check_dir(p, forest, paths, slopes, mapa_len, part, caminho):
                     new_dir.add((dL+pL, dR+pR))
     return new_dir
 
-def print_mapa_color(mapa, caminho, p):
+def print_mapa_color(forest, paths, slopes, mapa_len, caminho, p):
     CEND    = '\33[0m'
     CWHITE  = '\33[37m'
     CRED    = '\33[31m'
@@ -92,20 +93,22 @@ def print_mapa_color(mapa, caminho, p):
     CGREEN  = '\33[32m'
     CCYAN  = '\33[36m'
     system('cls')
-    for iL,line in enumerate(mapa):
+    nL, nR = mapa_len
+    for iL in range(nL):
         strline = ''
         print(iL, end='\t')
-        for iR, ch in enumerate(line):
+        for iR in range(nR):
             if (iL, iR) == p:
                 strline += CCYAN + 'X' + CEND
             elif (iL, iR) in caminho:
                 strline += CRED + 'O' + CEND
-            elif ch == '#':
-                strline += CGREEN + '#' + CEND
-            elif ch in '^<>v':
-                strline += CBLUE + ch + CEND
-            else:
+            elif (iL, iR) in paths:
                 strline += CWHITE + '.' + CEND
+            elif (iL, iR) in slopes:
+                strline += CBLUE + slopes[(iL, iR)] + CEND
+            
+            if (iL, iR) in forest:
+                strline += CGREEN + '#' + CEND
         print(strline.replace(' ', ''))
     
 if __name__ == "__main__":
