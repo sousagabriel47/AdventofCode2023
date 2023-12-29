@@ -4,7 +4,7 @@ from os import system
 from copy import deepcopy
 sys.setrecursionlimit(int(10e6))
 
-
+D_VERT = {}
 total = []
 
 def solve(data, mode):
@@ -13,7 +13,7 @@ def solve(data, mode):
     forest = set()
     paths = set()
     slopes = {}
-
+    
     for iL,line in enumerate(mapa):
         for iR, ch in enumerate(line):
             if ch == '#':
@@ -27,36 +27,76 @@ def solve(data, mode):
 
     start = (0,1)
     end = (nL-1,nR-2)
+    direction = [(1,0),(0,1),(-1,0),(0,-1)]
+    VERTICES = set()
+    VERTICES.add(start)
+    VERTICES.add(end)
+
+    for pL, pR in paths:
+        vizinhos = 0
+        for dL, dR in direction:
+            if ((dL + pL, pR + dR) in paths or 
+                (dL + pL, pR + dR) in slopes.keys()):
+                vizinhos += 1
+        if vizinhos > 2:
+            VERTICES.add((pL, pR))
+
+
+
     mapa_len = (nL, nR)
     ans = [0,0]
-    for part in [2]:
+    for part in [1,2]:
         total.clear() 
-        rota_dfs(start, forest, paths, slopes, mapa_len, None, 0, end, part)
+        # if part==1:
+        #     rota_dfs(start, forest, paths, slopes, mapa_len, None, 0, end, part)
+        # else:
+        for p in VERTICES:
+            D_VERT[p] = []
+            dfs_vertices(p, p, forest, paths, slopes, mapa_len, None, 0, VERTICES, part)
+        rota_dfs(start, None, 0, end)
+
         ans[part-1] = max(total)
         print(f'part{part}: {ans[part-1]}')
 
-def rota_dfs(p, forest, paths, slopes, mapa_len, caminho, dist, end, part):
+def dfs_vertices(p, start, forest, paths, slopes, mapa_len, caminho, dist, end_list, part):
     if caminho is None:
         caminho = set()
     caminho.add(p)
 
-    if p == end:
-        print(len(total))
-        print_mapa_color(forest, paths, slopes, mapa_len, caminho, p)
-        total.append(dist)
+    if p in end_list and p != start:
+        D_VERT[start].append((p,dist))
         return
 
     new = check_dir(p, forest, paths, slopes, mapa_len, part, caminho)
-    if not dist % 500:
-        print_mapa_color(forest, paths, slopes, mapa_len, caminho, p)
-        print(p, dist, new)
 
     for nP in new:
         if nP not in caminho:
-            rota_dfs(nP, forest, paths, slopes, mapa_len, deepcopy(caminho), dist+1, end, part)
-        else:
-            if dist>2400:
-                print('NEW',nP)
+            dfs_vertices(nP, start, forest, 
+                 paths, slopes, mapa_len, 
+                 (caminho), dist+1, end_list, part)
+
+
+def rota_dfs(p, caminho, dist, end):
+     
+    if caminho is None:
+         caminho = set()
+    caminho.add(p)
+
+    if p == end:
+        #print(len(total))
+        total.append(dist)
+        print(dist, max(total))
+        return
+    #print(caminho)
+    for nP,nDist in D_VERT[p]:
+        if nP not in caminho:
+            rota_dfs(nP, deepcopy(caminho), nDist+dist, end)
+
+    #6582 low
+
+    # for nP in new:
+    #     if nP not in caminho:
+    #         rota_dfs(nP, forest, paths, slopes, mapa_len, deepcopy(caminho), dist+1, end, part)
         
 
 
