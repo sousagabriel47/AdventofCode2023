@@ -15,7 +15,7 @@ def solve(data, mode):
 
     forest = set()
     paths = set()
-    slopes = set()
+    slopes = {}
 
     for iL,line in enumerate(mapa):
         for iR, ch in enumerate(line):
@@ -24,22 +24,21 @@ def solve(data, mode):
             if ch == '.':
                 paths.add((iL,iR))
             if ch in '^<>v':
-                slopes.add((ch,iL,iR))
+                slopes[(iL,iR)] = ch
     nL = len(mapa)
     nR = len(mapa[0])
 
     start = (0,1)
     end = (nL-1,nR-2)
-    
+    mapa_len = (nL, nR)
     ans = [0,0]
     for part in [2]:
         total.clear() 
-        rota_dfs(start, mapa, None, 0, end, part)
+        rota_dfs(start, forest, paths, slopes, mapa_len, None, 0, end, part)
         ans[part-1] = max(total)
         print(f'part{part}: {ans[part-1]}')
 
-@cache
-def rota_dfs(p, mapa, caminho, dist, end, part):
+def rota_dfs(p, forest, paths, slopes, mapa_len, caminho, dist, end, part):
     if caminho is None:
         caminho = set()
     caminho.add(p)
@@ -49,36 +48,33 @@ def rota_dfs(p, mapa, caminho, dist, end, part):
         total.append(dist)
         return
 
-    new = check_dir(p, mapa, part, caminho)
+    new = check_dir(p, forest, paths, slopes, mapa_len, part, caminho)
     if dist > 2400:
         #print_mapa_color(mapa, caminho, p)
         print(p, dist, new)
 
     for nP in new:
         if nP not in caminho:
-            rota_dfs(nP, mapa, deepcopy(caminho), dist+1, end, part)
+            rota_dfs(nP, forest, paths, slopes, mapa_len, deepcopy(caminho), dist+1, end, part)
         else:
             if dist>2400:
                 print('NEW',nP)
         
 
 
-def check_dir(p, mapa, part, caminho):
+def check_dir(p, forest, paths, slopes, mapa_len, part, caminho):
     pL = p[0]
     pR = p[1]
-    directions = {(1,0),(0,1),(-1,0),(0,-1)}
+    directions = {('v',1,0),('>',0,1),('^',-1,0),('<',0,-1)}
     new_dir = set()
-    nL, nR = len(mapa), len(mapa[0])
-    for dL, dR in directions:
+    nL, nR = mapa_len
+    for ch, dL, dR in directions:
         if (((dL+pL) in range(nL)) and
             (dR+pR) in range(nR) and
-            (mapa[dL+pL][dR+pR] != '#')):
+            ((dL+pL, dR+pR) not in forest)):
             if part==1:
-                if mapa[dL+pL][dR+pR] in '^<>v':
-                    if ((mapa[dL+pL][dR+pR] == '>' and (dL,dR)==(0,1)) or
-                        (mapa[dL+pL][dR+pR] == 'v' and (dL,dR)==(1,0)) or
-                        (mapa[dL+pL][dR+pR] == '<' and (dL,dR)==(0,-1)) or 
-                        (mapa[dL+pL][dR+pR] == '^' and (dL,dR)==(-1,0))):
+                if (dL+pL, dR+pR) in slopes:
+                    if (ch == slopes[(dL+pL, dR+pR)]):
                         new_dir.add((dL+pL, dR+pR))
                 else:
                     new_dir.add((dL+pL, dR+pR))
