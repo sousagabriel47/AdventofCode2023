@@ -1,10 +1,7 @@
 """Solution of day1 - AoC2023."""
 import sys
-from collections import deque
-from time import sleep
 from os import system
 from copy import deepcopy
-from functools import cache
 sys.setrecursionlimit(int(10e6))
 
 
