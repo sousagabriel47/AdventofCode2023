@@ -50,9 +50,11 @@ def solve(data, mode):
         # if part==1:
         #     rota_dfs(start, forest, paths, slopes, mapa_len, None, 0, end, part)
         # else:
+        print('vertices')
         for p in VERTICES:
             D_VERT[p] = []
             dfs_vertices(p, p, forest, paths, slopes, mapa_len, None, 0, VERTICES, part)
+        print('final')
         rota_dfs(start, None, 0, end)
 
         ans[part-1] = max(total)
