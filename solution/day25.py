@@ -6,31 +6,32 @@ import sympy as sp
 
 
 def solve(data, mode):
-    connections = {line.split(': ')[0]: line.split(': ')[1].split() 
+    connections = {line.split(': ')[0]: set(line.split(': ')[1].split())
                    for line in data.splitlines()}
 
-    for conn, listcon in connections.items():
-        print(conn, listcon)    
-    ans =[0,0]
-    new_connections = {}
-    for conn, listcon in connections.items():
-        for conn2 in listcon:
-            if conn2 not in connections.keys():
-                new_connections[conn2] = []
-                new_connections[conn2].append(conn)
-            else:
-                if conn not in connections[conn2]:
-                    new_connections[conn2] = []
-                    new_connections[conn2].append(conn)
 
-    for conn, listcon in sorted(new_connections.items(),key=lambda x:len(listcon)):
-        if conn not in connections.keys():
-            connections[conn] = listcon
-        else:
-            connections[conn].extend(listcon)
-    print('depois')
-    for conn, listcon in connections.items():
-        print(conn, listcon)    
+    ans = [0,0]
+
+    all_nodes = set()
+    for conn, listconn in connections.items():
+        all_nodes.add(conn)
+        for conn2 in listconn:
+            all_nodes.add(conn2)
+    G = {}
+    for node in all_nodes:
+        G[node] = set()
+        for conn, listconn in connections.items():
+            if node == conn:
+                for conn2 in listconn:
+                    G[node].add(conn2)
+            if node in listconn:
+                G[node].add(conn)
+
+    print(len(all_nodes))
+    print(len(G))
+    for conn, listconn in G.items():
+        print(conn, listconn)
+    
 
     for part in [1, 2]:
            
