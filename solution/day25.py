@@ -30,7 +30,8 @@ def solve(data, mode):
     print(len(all_nodes))
     print(len(G))
     for conn, listconn in G.items():
-        print(conn, listconn)
+        for conn2 in listconn:
+            print(conn, '->', conn2)
     
 
     for part in [1, 2]:
