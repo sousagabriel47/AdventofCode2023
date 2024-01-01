@@ -53,7 +53,11 @@ def solve(data, mode):
                             ((y00-y01)/(m1-m0) - p1)/v1 > 0)]
             ans[part-1] = sum(list_solve)
         else:
-            ans[part-1] = sum(sp.solve(hail_eq, xr, yr, zr, vrx, vry, vrz, t0, t1, t2)[0][:3])
+            s = sp.solve(hail_eq, xr, yr, zr, vrx, vry, vrz, t0, t1, t2)[0]
+            print('xr, yr, zr, vrx, vry, vrz')
+            print(s[:6])
+            ans[part-1] = sum(s[:3])
+            
 
         
         print(f'part{part}: {ans[part-1]}')
